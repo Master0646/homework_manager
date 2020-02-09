@@ -1,7 +1,47 @@
 import axios from 'axios'
 import Vue from 'vue'
+import store from '@/store'
 
 const _axios = axios.create()
+
+_axios.interceptors.request.use(originConfig => {
+    const reqConfig = {
+        ...originConfig
+    }
+    console.log("request", reqConfig)
+    // step1: 容错处理
+    if (!reqConfig.url) {
+        throw new Error({
+            source: 'axiosInterceptors',
+            message: 'request need url',
+        })
+    }
+
+    // step2: auth 处理
+    if (reqConfig.url !== '/auth') {
+        // 为header戴上token
+        reqConfig.headers['authorization'] = token
+    }
+    return reqConfig
+}, error => {
+    Promise.reject(error)
+})
+
+let token = ""
+
+_axios.interceptors.response.use(async (res) => {
+    if (res.status === 200) {
+        token = res.headers.authorization
+        return res
+    }
+    // 处理token失效
+    return new Promise(async (resolve, reject) => {
+        reject(res)
+    })
+}, error => {
+    // eslint-disable-next-line no-console
+    console.log(error)
+})
 
 Plugin.install = function (Vue) {
     Vue.axios = _axios

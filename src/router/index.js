@@ -1,5 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+import homeRouter from './routes'
+import store from '@/store'
 
 Vue.use(VueRouter)
 
@@ -7,38 +9,35 @@ const routes = [{
     path: '/',
     name: 'hms',
     redirect: '/notice',
-    component: () => import('../components/layout/AdminLayout.vue'),
-    children: [{
-            path: "/notice",
-            name: '消息通知',
-            component: () => import('../views/Notice.vue')
-        },
-        {
-            path: '/myCourse',
-            name: '课程',
-            component: () => import('../views/MyCourse.vue')
-        },
-        {
-            path: '/course/:id',
-            name: '课程',
-            component: () => import('../views/CourseDetail.vue')
-        },
-        {
-            path: '/homework/:id',
-            name: '课程',
-            component: () => import('../views/HomeworkDetail.vue')
-        }, {
-            path: '/about',
-            name: '关于系统',
-            component: () => import('../views/About.vue')
-        }
-    ]
+    component: () => import('@/components/layout/AdminLayout.vue'),
+    children: homeRouter
+}, {
+    path: '/login',
+    name: '登录',
+    component: () => import('@/views/Login.vue')
 }]
 
 const router = new VueRouter({
     mode: 'history',
     base: process.env.BASE_URL,
     routes
+})
+
+
+router.beforeEach((to, from, next) => {
+
+    if (!store.state.isLogin && to.name != "登录") {
+        next({
+            path: '/login'
+        })
+        return
+    }
+
+    if (to.name) {
+        document.title = to.name
+    }
+
+    next()
 })
 
 export default router

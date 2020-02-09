@@ -40,8 +40,8 @@ export default {
                     path: "/notice"
                 },
                 {
-                    name: "课程",
-                    path: "/myCourse"
+                    name: "我的班级",
+                    path: "/myClass"
                 },
                 {
                     name: "关于系统",

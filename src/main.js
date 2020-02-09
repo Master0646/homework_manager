@@ -6,7 +6,6 @@ import './registerServiceWorker'
 import ViewUI from 'view-design';
 import 'view-design/dist/styles/iview.css';
 
-import '@/services/utils/mock'
 
 Vue.config.productionTip = false
 Vue.use(ViewUI);

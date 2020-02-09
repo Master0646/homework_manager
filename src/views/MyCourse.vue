@@ -22,9 +22,13 @@
 
 <script>
 import CouresForm from "@/components/base/CourseForm";
+import { get } from "@/services/utils/axios";
 export default {
     components: {
         CouresForm
+    },
+    mounted() {
+        get(`/api/class/1`);
     },
     data() {
         return {
