@@ -28,6 +28,7 @@ export default {
         CouresForm
     },
     mounted() {
+        console.log("now ===>", this.$route);
         get(`/api/class/1`);
     },
     data() {

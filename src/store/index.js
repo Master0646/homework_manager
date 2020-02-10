@@ -1,23 +1,36 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 
+import config from '@/config'
+
+
+
 Vue.use(Vuex)
+
+const getter = {
+    getAuth(state) {
+        return config.authConfig[state.user.role.name]
+    }
+}
 
 export default new Vuex.Store({
     state: {
-        isLogin: false
+        isLogin: false,
+        user: {}
     },
     mutations: {
-        setLogin(state) {
+        setLoginAndUserInfo(state, userInfo) {
             state.isLogin = true
+            state.user = userInfo
         },
     },
     actions: {
-        setLogin({
+        setLoginAndUserInfo({
             commit
-        }) {
-            commit("setLogin", true)
+        }, userInfo) {
+            commit("setLoginAndUserInfo", userInfo)
         }
     },
-    modules: {}
+    modules: {},
+    getters: getter
 })

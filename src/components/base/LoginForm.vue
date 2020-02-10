@@ -31,10 +31,9 @@ export default {
             this.$refs[name].validate(async valid => {
                 if (valid) {
                     let response = await auth.login(this.formData);
-                    console.log(response);
                     if (response.status == 200) {
                         this.$Message.success("登录成功!");
-                        this.setLogin();
+                        this.setLoginAndUserInfo(response.data.data);
                         setTimeout(() => {
                             this.$router.push("/about");
                         }, 1000);
@@ -46,7 +45,7 @@ export default {
                 }
             });
         },
-        ...mapActions(["setLogin"])
+        ...mapActions(["setLoginAndUserInfo"])
     }
 };
 </script>

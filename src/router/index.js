@@ -26,7 +26,7 @@ const router = new VueRouter({
 
 router.beforeEach((to, from, next) => {
 
-    if (!store.state.isLogin && to.name != "登录") {
+    if (!store.state.isLogin && to.meta.auth > 0) {
         next({
             path: '/login'
         })

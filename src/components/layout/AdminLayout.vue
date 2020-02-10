@@ -13,7 +13,7 @@
                         <MenuItem
                             :key="index"
                             :to="element.path"
-                            :name="element.name"
+                            :name="element.parent"
                         >{{ element.name }}</MenuItem>
                     </template>
                 </Menu>
@@ -26,29 +26,47 @@
 </template>
 
 <script>
+import config from "@/config";
+import { mapGetters } from "vuex";
 export default {
     computed: {
         active() {
-            return this.$route.name;
+            return this.$route.meta.parent;
         }
     },
     data() {
-        return {
-            menus: [
-                {
-                    name: "消息通知",
-                    path: "/notice"
-                },
-                {
-                    name: "我的班级",
-                    path: "/myClass"
-                },
-                {
-                    name: "关于系统",
-                    path: "/about"
+        let auth = this.getAuth() || 0;
+        let routes = {};
+        /**
+         * 导航分组
+         * 由于学生和教师都拥有课程导航
+         * 但是学生并没有班级导航
+         * 所以为导航设立组
+         * 每组导航只允许存在一个导航
+         */
+        config.stageConfig.forEach(element => {
+            let key = element.parent;
+            // 导航显示条件：
+            // 1、权限大于限定权限才允许显示
+            // 2、此导航允许显示
+            if (auth >= element.auth && element.inNav) {
+                // 若该组导航不存在，或者该组导航存在，
+                // 用auth权限值较大的覆盖较小的导航
+                if (
+                    !routes[key] ||
+                    (routes[key] && routes[key].auth <= element.auth)
+                ) {
+                    routes[key] = element;
                 }
-            ]
+            }
+        });
+        console.log(routes);
+        return {
+            menus: routes
         };
+    },
+    methods: {
+        ...mapGetters(["getAuth"])
     }
 };
 </script>
