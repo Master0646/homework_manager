@@ -23,6 +23,7 @@ import classService from "@/services/modules/ClassService";
 export default {
     async mounted() {
         let myClass = await classService.getClass(1);
+        console.log(myClass);
         this.classes = myClass.data;
     },
     data() {

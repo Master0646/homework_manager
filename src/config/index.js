@@ -34,7 +34,7 @@ const stageConfig = [{
     },
     {
         path: '/course',
-        params: ['id'],
+        params: ['classId', 'courseId'],
         name: '课程详细',
         parent: 'class',
         file: 'views/CourseDetail.vue',

@@ -60,7 +60,6 @@ export default {
                 }
             }
         });
-        console.log(routes);
         return {
             menus: routes
         };

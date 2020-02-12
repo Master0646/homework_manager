@@ -17,23 +17,43 @@ _axios.interceptors.request.use(originConfig => {
         })
     }
 
-    // step2: auth 处理
-    if (reqConfig.url !== '/auth') {
-        // 为header戴上token
-        reqConfig.headers['authorization'] = token
-    }
+    reqConfig.headers['authorization'] = store.state.token
+
+    // 文件上传处理
+    // let hasFile = false
+    // Object.keys(reqConfig.data).forEach((key) => {
+    //     if (typeof reqConfig.data[key] === 'object') {
+    //         const item = reqConfig.data[key]
+    //         if (item instanceof FileList || item instanceof File || item instanceof Blob) {
+    //             hasFile = true
+    //         } else if (Object.prototype.toString.call(item) === '[object Object]') {
+    //             reqConfig.data[key] = JSON.stringify(reqConfig.data[key])
+    //         }
+    //     }
+    // })
+
+    // if (hasFile) {
+    //     const formData = new FormData()
+    //     Object.keys(reqConfig.data).forEach(key => {
+    //         formData.append(key, reqConfig.data[key])
+    //     })
+    //     reqConfig.data = formData
+    // }
+
     return reqConfig
 }, error => {
     Promise.reject(error)
 })
 
-let token = ""
-
 _axios.interceptors.response.use(async (res) => {
+    console.log("response", res)
     if (res.status === 200) {
-        token = res.headers.authorization
+        if (res.config.url === '/auth') {
+            store.state.token = res.headers.authorization
+        }
         return res
     }
+
     // 处理token失效
     return new Promise(async (resolve, reject) => {
         reject(res)

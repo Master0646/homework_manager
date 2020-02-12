@@ -16,7 +16,8 @@ const getter = {
 export default new Vuex.Store({
     state: {
         isLogin: false,
-        user: {}
+        user: {},
+        token: null
     },
     mutations: {
         setLoginAndUserInfo(state, userInfo) {

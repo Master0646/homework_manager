@@ -7,10 +7,9 @@
             <List item-layout="vertical">
                 <template v-for="c in classData">
                     <ListItem :key="c.id">
-                        <Card :to="`/course/${c.id}`" :bordered="false">
+                        <Card :to="`/course/${classId}/${c.id}`" :bordered="false">
                             <p slot="title">{{ c.name }}</p>
-                            <p>授课老师：{{ c.lecturer }}</p>
-                            <p>班级人数: {{ c.enrollee }}</p>
+                            <p>课程描述: {{ c.description }}</p>
                         </Card>
                     </ListItem>
                 </template>
@@ -22,26 +21,21 @@
 
 <script>
 import CouresForm from "@/components/base/CourseForm";
-import { get } from "@/services/utils/axios";
+import courseService from "@/services/modules/CourseService";
 export default {
     components: {
         CouresForm
     },
-    mounted() {
-        console.log("now ===>", this.$route);
-        get(`/api/class/1`);
+    async mounted() {
+        this.classId = this.$route.params.id;
+        let response = await courseService.getCourses(this.classId);
+        this.classData = response.data.data;
     },
     data() {
         return {
+            classId: null,
             formData: {},
-            classData: [
-                {
-                    id: 1,
-                    name: "J2EE企业级应用框架",
-                    lecturer: "黄锵",
-                    enrollee: 50
-                }
-            ]
+            classData: []
         };
     },
     methods: {

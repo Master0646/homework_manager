@@ -3,16 +3,15 @@
         <Card :style="{marginBottom: '16px'}">
             <div slot="title">
                 <Icon type="ios-bookmark" />
-                {{ course.name }}
+                {{ detail.name }}
             </div>
-            <div>课程讲师: {{ course.lecturer }}</div>
-            <div>课程简介: {{ course.description }}</div>
+            <div>课程简介: {{ detail.description }}</div>
         </Card>
         <div class="homework-list">
             <Card>
                 <div slot="title">作业列表</div>
                 <List>
-                    <ListItem v-for="(h, index) in homeworks" :key="index">
+                    <ListItem v-for="(h, index) in detail.homeworkPage.content" :key="index">
                         <ListItemMeta :title="h.title" :description="h.description" />
                         <template slot="action">
                             <li>
@@ -20,7 +19,15 @@
                             </li>
                         </template>
                     </ListItem>
-                    <Page slot="footer" :total="40" size="small" show-elevator show-sizer />
+                    <Page
+                        slot="footer"
+                        :total="detail.homeworkPage.totalElements"
+                        size="small"
+                        :page-size="detail.homeworkPage.size"
+                        show-elevator
+                        show-sizer
+                        @on-change="fetchDetail"
+                    />
                 </List>
             </Card>
         </div>
@@ -28,21 +35,36 @@
 </template>
 
 <script>
-import { get } from "@/services/utils/axios";
+import courseService from "@/services/modules/CourseService";
 export default {
-    mounted() {
-        const id = this.$route.params.id;
-        get(`/api/courses/${id}`).then(response => {
-            this.course = response.data.course;
-            this.homeworks = response.data.homeworks;
-        });
+    async mounted() {
+        const params = this.$route.params;
+        this.classId = params.classId;
+        this.courseId = params.courseId;
+        this.fetchDetail(1);
     },
     data() {
         return {
-            course: {},
-            students: [],
-            homeworks: []
+            classId: null,
+            courseId: null,
+            detail: {
+                homeworkPage: {
+                    content: [],
+                    totalElements: 0,
+                    size: 0
+                }
+            }
         };
+    },
+    methods: {
+        async fetchDetail(page) {
+            let response = await courseService.getDetail(
+                this.classId,
+                this.courseId,
+                page
+            );
+            this.detail = response.data.data;
+        }
     }
 };
 </script>
